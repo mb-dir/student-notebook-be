@@ -5,6 +5,8 @@ const app = express();
 const port = process.env.PORT;
 const DB_URI = process.env.DB_URI || "";
 
+app.use(express.json());
+
 mongoose
   .connect(DB_URI)
   .then(() => {
