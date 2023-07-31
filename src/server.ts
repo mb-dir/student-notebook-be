@@ -1,14 +1,14 @@
 import express from "express";
 import "dotenv/config";
 import mongoose from "mongoose";
-import { getAllUsers } from "./controllers/userController";
+import { userRoute } from "./routes/user";
 const app = express();
 const port = process.env.PORT;
 const DB_URI = process.env.DB_URI || "";
 
 app.use(express.json());
 
-app.use("/", getAllUsers);
+app.use("/api/user", userRoute);
 
 mongoose
   .connect(DB_URI)
