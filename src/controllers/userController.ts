@@ -10,9 +10,10 @@ const _createToken = (_id: string) => {
 };
 
 export const registerUser = async (req: Request, res: Response) => {
-  const { username, email, password }: IUserDocument = req.body;
+  const { username, email, password, confirmPassword }: IUserDocument =
+    req.body;
   try {
-    if (!email || !password || !username) {
+    if (!(email && password && username && confirmPassword)) {
       return res.status(400).json({ error: "You must filled in all fields" });
     }
     if (!validator.isEmail(email)) {
@@ -32,6 +33,12 @@ export const registerUser = async (req: Request, res: Response) => {
       return res
         .status(409)
         .json({ error: "User with this email already exists" });
+    }
+
+    if (password !== confirmPassword) {
+      return res
+        .status(409)
+        .json({ error: "You must provide the same passwords" });
     }
 
     const salt: string = await bcrypt.genSalt(5);
