@@ -1,7 +1,9 @@
-import express from "express";
 import "dotenv/config";
+
+import express from "express";
 import mongoose from "mongoose";
 import { userRoute } from "./routes/user";
+
 const app = express();
 const port = process.env.PORT;
 const DB_URI = process.env.DB_URI || "";
