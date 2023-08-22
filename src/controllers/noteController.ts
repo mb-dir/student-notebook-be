@@ -15,6 +15,23 @@ export const getAllNotes = async (req: Request, res: Response) => {
 export const createNote = async (req: Request, res: Response) => {
   try {
     const { title, content, isHighPriorty }: INoteDocument = req.body;
+    if (typeof title !== "string" || title.trim() === "") {
+      return res
+        .status(400)
+        .json({ error: "Title must be a non-empty string" });
+    }
+
+    if (typeof content !== "string" || content.trim() === "") {
+      return res
+        .status(400)
+        .json({ error: "Content must be a non-empty string" });
+    }
+
+    if (typeof isHighPriorty !== "boolean") {
+      return res
+        .status(400)
+        .json({ error: "You have to specify the priority of the note" });
+    }
     const newNote = await NoteModel.create({ title, content, isHighPriorty });
     return res.status(200).json({ newNote });
   } catch (error) {
