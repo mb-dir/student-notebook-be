@@ -3,7 +3,7 @@ import { Document, Schema, model } from "mongoose";
 export interface INoteDocument extends Document {
   title: string;
   content: string;
-  isHighPriorty: boolean;
+  isHighPriority: boolean;
 }
 
 const noteSchema = new Schema<INoteDocument>(
@@ -18,7 +18,7 @@ const noteSchema = new Schema<INoteDocument>(
       required: true,
       trim: true,
     },
-    isHighPriorty: {
+    isHighPriority: {
       type: Boolean,
       required: true,
     },

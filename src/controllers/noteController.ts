@@ -14,7 +14,7 @@ export const getAllNotes = async (req: Request, res: Response) => {
 
 export const createNote = async (req: Request, res: Response) => {
   try {
-    const { title, content, isHighPriorty }: INoteDocument = req.body;
+    const { title, content, isHighPriority }: INoteDocument = req.body;
     if (typeof title !== "string" || title.trim() === "") {
       return res
         .status(400)
@@ -27,12 +27,12 @@ export const createNote = async (req: Request, res: Response) => {
         .json({ error: "Content must be a non-empty string" });
     }
 
-    if (typeof isHighPriorty !== "boolean") {
+    if (typeof isHighPriority !== "boolean") {
       return res
         .status(400)
         .json({ error: "You have to specify the priority of the note" });
     }
-    const newNote = await NoteModel.create({ title, content, isHighPriorty });
+    const newNote = await NoteModel.create({ title, content, isHighPriority });
     return res.status(200).json({ newNote });
   } catch (error) {
     return res.status(500).json({ error });
@@ -67,7 +67,7 @@ export const updateNote = async (
 ) => {
   try {
     const { id } = req.params;
-    const { title, content, isHighPriorty }: INoteDocument = req.body;
+    const { title, content, isHighPriority }: INoteDocument = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ error: "Invalid note ID format" });
@@ -85,7 +85,7 @@ export const updateNote = async (
         .json({ error: "Content must be a non-empty string" });
     }
 
-    if (typeof isHighPriorty !== "boolean") {
+    if (typeof isHighPriority !== "boolean") {
       return res
         .status(400)
         .json({ error: "You have to specify the priority of the note" });
@@ -94,7 +94,7 @@ export const updateNote = async (
     const updatedNote = await NoteModel.findByIdAndUpdate(id, {
       title,
       content,
-      isHighPriorty,
+      isHighPriority,
     });
 
     if (!updatedNote) {
