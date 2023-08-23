@@ -5,8 +5,24 @@ import mongoose from "mongoose";
 
 export const getAllNotes = async (req: Request, res: Response) => {
   try {
-    const notes = await NoteModel.find();
-    return res.status(200).json({ notes });
+    const page: number = req.query && req.query.page ? +req.query.page : 1;
+    if (page < 1) {
+      return res
+        .status(400)
+        .json({ error: "Page parameter must be a positive integer." });
+    }
+    const itemsPerPage: number = 6;
+    const startIndex: number = (page - 1) * itemsPerPage;
+
+    const [notes, totalNotesCount]: [INoteDocument[], number] =
+      await Promise.all([
+        NoteModel.find()
+          .sort({ createdAt: -1 })
+          .skip(startIndex)
+          .limit(itemsPerPage),
+        NoteModel.countDocuments(),
+      ]);
+    return res.status(200).json({ notes, totalNotesCount, page, itemsPerPage });
   } catch (error) {
     return res.status(500).json({ error });
   }
