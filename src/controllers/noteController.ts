@@ -14,13 +14,24 @@ export const getAllNotes = async (req: Request, res: Response) => {
     const itemsPerPage: number = 6;
     const startIndex: number = (page - 1) * itemsPerPage;
 
+    const search: string = (req.query?.search || "").toString();
+
+    const queryFilter: any = search
+      ? {
+          $or: [
+            { title: { $regex: search, $options: "i" } }, // Case-insensitive title search
+            { content: { $regex: search, $options: "i" } }, // Case-insensitive content search
+          ],
+        }
+      : {};
+
     const [notes, totalNotesCount]: [INoteDocument[], number] =
       await Promise.all([
-        NoteModel.find()
+        NoteModel.find(queryFilter)
           .sort({ createdAt: -1 })
           .skip(startIndex)
           .limit(itemsPerPage),
-        NoteModel.countDocuments(),
+        NoteModel.countDocuments(queryFilter),
       ]);
     return res.status(200).json({ notes, totalNotesCount, page, itemsPerPage });
   } catch (error) {
