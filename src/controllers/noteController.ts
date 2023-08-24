@@ -11,8 +11,8 @@ export const getAllNotes = async (req: Request, res: Response) => {
         .status(400)
         .json({ error: "Page parameter must be a positive integer." });
     }
-    const itemsPerPage: number = 6;
-    const startIndex: number = (page - 1) * itemsPerPage;
+    const notesPerPage: number = 6;
+    const startIndex: number = (page - 1) * notesPerPage;
 
     const search: string = (req.query?.search || "").toString();
 
@@ -30,10 +30,15 @@ export const getAllNotes = async (req: Request, res: Response) => {
         NoteModel.find(queryFilter)
           .sort({ createdAt: -1 })
           .skip(startIndex)
-          .limit(itemsPerPage),
+          .limit(notesPerPage),
         NoteModel.countDocuments(queryFilter),
       ]);
-    return res.status(200).json({ notes, totalNotesCount, page, itemsPerPage });
+
+    const notesOnCurrentPage = notes.length;
+
+    return res
+      .status(200)
+      .json({ notes, totalNotesCount, page, notesPerPage, notesOnCurrentPage });
   } catch (error) {
     return res.status(500).json({ error });
   }
