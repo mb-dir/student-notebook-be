@@ -123,17 +123,17 @@ export const updateNote = async (
         .json({ error: "You have to specify the priority of the note" });
     }
 
-    const updatedNote = await NoteModel.findByIdAndUpdate(id, {
+    const oldNote = await NoteModel.findByIdAndUpdate(id, {
       title,
       content,
       isHighPriority,
     });
 
-    if (!updatedNote) {
+    if (!oldNote) {
       return res.status(404).json({ error: "Note not found" });
     }
 
-    return res.status(200).json({ updatedNote });
+    return res.status(200).json({ oldNote });
   } catch (error) {
     return res.status(500).json({ error });
   }
