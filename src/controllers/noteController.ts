@@ -44,6 +44,25 @@ export const getAllNotes = async (req: Request, res: Response) => {
   }
 };
 
+export const getNote = async (req: Request<{ id: string }>, res: Response) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ error: "Invalid note ID format" });
+    }
+
+    const note: INoteDocument | null = await NoteModel.findById(id);
+
+    if (!note) {
+      return res.status(404).json({ error: "Note not found" });
+    }
+
+    return res.status(200).json({ note });
+  } catch (error: any) {
+    return res.status(500).json({ error });
+  }
+};
+
 export const createNote = async (req: Request, res: Response) => {
   try {
     const { title, content, isHighPriority }: INoteDocument = req.body;
