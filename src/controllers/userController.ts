@@ -1,9 +1,11 @@
-import { Request, Response } from "express";
 import "dotenv/config";
-import validator from "validator";
+
+import { IUserDocument, UserModel } from "../models/User";
+import { Request, Response } from "express";
+
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { UserModel, IUserDocument } from "../models/User";
+import validator from "validator";
 
 const _createToken = (_id: string) => {
   return jwt.sign({ _id }, process.env.SECRET || "", { expiresIn: "3d" });
