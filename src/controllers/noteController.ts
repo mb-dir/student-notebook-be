@@ -1,6 +1,7 @@
 import { INoteDocument, NoteModel } from "../models/Note";
 import { Request, Response } from "express";
 
+import { IUserDocument } from "../models/User";
 import mongoose from "mongoose";
 
 export const getAllNotes = async (req: Request, res: Response) => {
@@ -63,9 +64,13 @@ export const getNote = async (req: Request<{ id: string }>, res: Response) => {
   }
 };
 
-export const createNote = async (req: Request, res: Response) => {
+export const createNote = async (
+  req: Request<{ user: IUserDocument }>,
+  res: Response
+) => {
   try {
     const { title, content, isHighPriority }: INoteDocument = req.body;
+    const user_id = req?.user?.id;
     if (typeof title !== "string" || title.trim() === "") {
       return res
         .status(400)
@@ -87,6 +92,7 @@ export const createNote = async (req: Request, res: Response) => {
       title,
       content,
       isHighPriority,
+      user_id,
     });
     return res.status(200).json({ newNote });
   } catch (error: any) {
