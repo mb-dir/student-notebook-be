@@ -45,14 +45,14 @@ export const getAllNotes = async (req: Request, res: Response) => {
   }
 };
 
-export const getNote = async (req: Request<{ id: string }>, res: Response) => {
+export const getNote = async (req: Request<{ _id: string }>, res: Response) => {
   try {
-    const { id } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(id)) {
+    const { _id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(_id)) {
       return res.status(400).json({ error: "Invalid note ID format" });
     }
 
-    const note: INoteDocument | null = await NoteModel.findById(id);
+    const note: INoteDocument | null = await NoteModel.findById(_id);
 
     if (!note) {
       return res.status(404).json({ error: "Note not found" });
@@ -101,17 +101,17 @@ export const createNote = async (
 };
 
 export const deleteNote = async (
-  req: Request<{ id: string }>,
+  req: Request<{ _id: string }>,
   res: Response
 ) => {
   try {
-    const { id } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(id)) {
+    const { _id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(_id)) {
       return res.status(400).json({ error: "Invalid note ID format" });
     }
 
     const deletedNote: INoteDocument | null = await NoteModel.findByIdAndDelete(
-      id
+      _id
     );
 
     if (!deletedNote) {
@@ -125,14 +125,14 @@ export const deleteNote = async (
 };
 
 export const updateNote = async (
-  req: Request<{ id: string }>,
+  req: Request<{ _id: string }>,
   res: Response
 ) => {
   try {
-    const { id } = req.params;
+    const { _id } = req.params;
     const { title, content, isHighPriority }: INoteDocument = req.body;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
+    if (!mongoose.Types.ObjectId.isValid(_id)) {
       return res.status(400).json({ error: "Invalid note ID format" });
     }
 
@@ -155,7 +155,7 @@ export const updateNote = async (
     }
 
     const oldNote: INoteDocument | null = await NoteModel.findByIdAndUpdate(
-      id,
+      _id,
       {
         title,
         content,
