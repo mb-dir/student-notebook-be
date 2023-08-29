@@ -4,7 +4,10 @@ import { Request, Response } from "express";
 import { IUserDocument } from "../models/User";
 import mongoose from "mongoose";
 
-export const getAllNotes = async (req: Request, res: Response) => {
+export const getAllNotes = async (
+  req: Request<{ user: IUserDocument }>,
+  res: Response
+) => {
   try {
     const page: number = req.query && req.query.page ? +req.query.page : 1;
     if (page < 1) {
@@ -17,14 +20,17 @@ export const getAllNotes = async (req: Request, res: Response) => {
 
     const search: string = (req.query?.search || "").toString();
 
+    const user_id = req?.user?._id;
+
     const queryFilter: any = search
       ? {
           $or: [
             { title: { $regex: search, $options: "i" } }, // Case-insensitive title search
             { content: { $regex: search, $options: "i" } }, // Case-insensitive content search
           ],
+          user_id,
         }
-      : {};
+      : { user_id };
 
     const [notes, totalNotesCount]: [INoteDocument[], number] =
       await Promise.all([
@@ -70,7 +76,8 @@ export const createNote = async (
 ) => {
   try {
     const { title, content, isHighPriority }: INoteDocument = req.body;
-    const user_id = req?.user?.id;
+    const user_id = req?.user?._id;
+
     if (typeof title !== "string" || title.trim() === "") {
       return res
         .status(400)
