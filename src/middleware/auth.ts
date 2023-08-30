@@ -29,9 +29,9 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
       throw new Error("Invalid token");
     }
 
-    const { id }: JwtPayload = decodedToken;
+    const { _id }: JwtPayload = decodedToken;
 
-    const user: IUserDocument | null = await UserModel.findOne({ id });
+    const user: IUserDocument | null = await UserModel.findOne({ _id });
 
     if (!user) {
       return res.status(401).json({ message: "User not found" });

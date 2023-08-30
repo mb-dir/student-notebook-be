@@ -4,6 +4,7 @@ export interface INoteDocument extends Document {
   title: string;
   content: string;
   isHighPriority: boolean;
+  user_id: string;
 }
 
 const noteSchema = new Schema<INoteDocument>(
@@ -20,6 +21,10 @@ const noteSchema = new Schema<INoteDocument>(
     },
     isHighPriority: {
       type: Boolean,
+      required: true,
+    },
+    user_id: {
+      type: String,
       required: true,
     },
   },

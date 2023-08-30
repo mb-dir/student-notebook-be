@@ -1,9 +1,13 @@
 import { INoteDocument, NoteModel } from "../models/Note";
 import { Request, Response } from "express";
 
+import { IUserDocument } from "../models/User";
 import mongoose from "mongoose";
 
-export const getAllNotes = async (req: Request, res: Response) => {
+export const getAllNotes = async (
+  req: Request<{ user: IUserDocument }>,
+  res: Response
+) => {
   try {
     const page: number = req.query && req.query.page ? +req.query.page : 1;
     if (page < 1) {
@@ -16,14 +20,17 @@ export const getAllNotes = async (req: Request, res: Response) => {
 
     const search: string = (req.query?.search || "").toString();
 
+    const user_id = req?.user?._id;
+
     const queryFilter: any = search
       ? {
           $or: [
             { title: { $regex: search, $options: "i" } }, // Case-insensitive title search
             { content: { $regex: search, $options: "i" } }, // Case-insensitive content search
           ],
+          user_id,
         }
-      : {};
+      : { user_id };
 
     const [notes, totalNotesCount]: [INoteDocument[], number] =
       await Promise.all([
@@ -44,14 +51,14 @@ export const getAllNotes = async (req: Request, res: Response) => {
   }
 };
 
-export const getNote = async (req: Request<{ id: string }>, res: Response) => {
+export const getNote = async (req: Request<{ _id: string }>, res: Response) => {
   try {
-    const { id } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(id)) {
+    const { _id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(_id)) {
       return res.status(400).json({ error: "Invalid note ID format" });
     }
 
-    const note: INoteDocument | null = await NoteModel.findById(id);
+    const note: INoteDocument | null = await NoteModel.findById(_id);
 
     if (!note) {
       return res.status(404).json({ error: "Note not found" });
@@ -63,9 +70,14 @@ export const getNote = async (req: Request<{ id: string }>, res: Response) => {
   }
 };
 
-export const createNote = async (req: Request, res: Response) => {
+export const createNote = async (
+  req: Request<{ user: IUserDocument }>,
+  res: Response
+) => {
   try {
     const { title, content, isHighPriority }: INoteDocument = req.body;
+    const user_id = req?.user?._id;
+
     if (typeof title !== "string" || title.trim() === "") {
       return res
         .status(400)
@@ -87,6 +99,7 @@ export const createNote = async (req: Request, res: Response) => {
       title,
       content,
       isHighPriority,
+      user_id,
     });
     return res.status(200).json({ newNote });
   } catch (error: any) {
@@ -95,17 +108,17 @@ export const createNote = async (req: Request, res: Response) => {
 };
 
 export const deleteNote = async (
-  req: Request<{ id: string }>,
+  req: Request<{ _id: string }>,
   res: Response
 ) => {
   try {
-    const { id } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(id)) {
+    const { _id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(_id)) {
       return res.status(400).json({ error: "Invalid note ID format" });
     }
 
     const deletedNote: INoteDocument | null = await NoteModel.findByIdAndDelete(
-      id
+      _id
     );
 
     if (!deletedNote) {
@@ -119,14 +132,14 @@ export const deleteNote = async (
 };
 
 export const updateNote = async (
-  req: Request<{ id: string }>,
+  req: Request<{ _id: string }>,
   res: Response
 ) => {
   try {
-    const { id } = req.params;
+    const { _id } = req.params;
     const { title, content, isHighPriority }: INoteDocument = req.body;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
+    if (!mongoose.Types.ObjectId.isValid(_id)) {
       return res.status(400).json({ error: "Invalid note ID format" });
     }
 
@@ -149,7 +162,7 @@ export const updateNote = async (
     }
 
     const oldNote: INoteDocument | null = await NoteModel.findByIdAndUpdate(
-      id,
+      _id,
       {
         title,
         content,
