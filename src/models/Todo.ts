@@ -27,4 +27,4 @@ const todoSchema = new Schema<ITodoDocument>(
   }
 );
 
-export const NoteModel = model<ITodoDocument>("Todo", todoSchema);
+export const TodoModel = model<ITodoDocument>("Todo", todoSchema);
