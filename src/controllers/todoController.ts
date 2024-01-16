@@ -38,5 +38,20 @@ export const deleteTodo = async (
   req: Request<{ _id: string }>,
   res: Response
 ) => {
-  return res.status(200).json({ msg: "dupa działa" });
+  try {
+    const { _id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(_id))
+      return res.status(400).json({ error: "Invalid todo ID format" });
+
+    const deletedTodo: ITodoDocument | null = await TodoModel.findByIdAndDelete(
+      _id
+    );
+
+    if (!deletedTodo) return res.status(404).json({ error: "Note not found" });
+
+    return res.status(200).json(deletedTodo);
+  } catch (error) {
+    return res.status(500).json({ error });
+  }
 };
