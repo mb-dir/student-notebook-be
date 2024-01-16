@@ -4,6 +4,20 @@ import { Request, Response } from "express";
 import { IUserDocument } from "../models/User";
 import mongoose from "mongoose";
 
+export const getAllTodos = async (
+  req: Request<{ user: IUserDocument }>,
+  res: Response
+) => {
+  try {
+    const user_id = req?.user?._id;
+    const todos: ITodoDocument[] = await TodoModel.find({ user_id });
+
+    return res.status(200).json({ todos });
+  } catch (error) {
+    return res.status(500).json({ error });
+  }
+};
+
 export const createTodo = async (
   req: Request<{ user: IUserDocument }>,
   res: Response
@@ -30,7 +44,7 @@ export const createTodo = async (
 
     return res.status(200).json(newTodo);
   } catch (error: any) {
-    return res.status(500).json(error);
+    return res.status(500).json({ error });
   }
 };
 
