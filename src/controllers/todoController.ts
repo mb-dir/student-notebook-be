@@ -33,3 +33,10 @@ export const createTodo = async (
     return res.status(500).json(error);
   }
 };
+
+export const deleteTodo = async (
+  req: Request<{ _id: string }>,
+  res: Response
+) => {
+  return res.status(200).json({ msg: "dupa działa" });
+};
