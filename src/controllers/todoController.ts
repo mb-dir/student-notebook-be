@@ -110,16 +110,23 @@ export const updateTodo = async (
     if (!mongoose.Types.ObjectId.isValid(_id))
       return res.status(400).json({ error: "Invalid todo ID format" });
 
-    if (typeof content !== "string" || content.trim() === "")
+    if (typeof content !== "string" || content.trim() === "") {
       return res
         .status(400)
         .json({ error: "Content must be a non-empty string" });
+    }
 
-    // improve it like check if date is not from the past etc
-    if (typeof endDate !== "string" || endDate.trim() === "")
-      return res
-        .status(400)
-        .json({ error: "endDate must be a non-empty string" });
+    // Check if endDate is a valid date
+    if (!isValidDateFormat(endDate)) {
+      return res.status(400).json({ error: "Invalid date format" });
+    }
+
+    const parsedEndDate = new Date(endDate);
+
+    // Check if endDate is not in the past
+    const currentDate = new Date();
+    if (parsedEndDate < currentDate)
+      return res.status(400).json({ error: "End date must be in the future" });
 
     const oldTodo: ITodoDocument | null = await TodoModel.findByIdAndUpdate(
       _id,
