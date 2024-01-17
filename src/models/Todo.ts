@@ -3,7 +3,7 @@ import { Document, Schema, model } from "mongoose";
 export interface ITodoDocument extends Document {
   content: string;
   user_id: string;
-  endDate: Date;
+  endDate: string;
 }
 
 const todoSchema = new Schema<ITodoDocument>(
@@ -14,7 +14,7 @@ const todoSchema = new Schema<ITodoDocument>(
       trim: true,
     },
     endDate: {
-      type: Date,
+      type: String,
       required: true,
     },
     user_id: {
@@ -27,4 +27,4 @@ const todoSchema = new Schema<ITodoDocument>(
   }
 );
 
-export const NoteModel = model<ITodoDocument>("Todo", todoSchema);
+export const TodoModel = model<ITodoDocument>("Todo", todoSchema);
