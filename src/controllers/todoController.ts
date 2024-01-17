@@ -2,6 +2,7 @@ import { ITodoDocument, TodoModel } from "../models/Todo";
 import { Request, Response } from "express";
 
 import { IUserDocument } from "../models/User";
+import isValidDateFormat from "../helpers/validDateFormat";
 import mongoose from "mongoose";
 
 export const getAllTodos = async (
@@ -50,14 +51,23 @@ export const createTodo = async (
         .status(400)
         .json({ error: "Content must be a non-empty string" });
     }
-    // improve it like check if date is not from the past etc
-    if (typeof endDate !== "string") {
-      return res.status(400).json({ error: "End date must be a date" });
+
+    // Check if endDate is a valid date
+    if (!isValidDateFormat(endDate)) {
+      return res.status(400).json({ error: "Invalid date format" });
+    }
+
+    const parsedEndDate = new Date(endDate);
+
+    // Check if endDate is not in the past
+    const currentDate = new Date();
+    if (parsedEndDate < currentDate) {
+      return res.status(400).json({ error: "End date must be in the future" });
     }
 
     const newTodo: ITodoDocument = await TodoModel.create({
       content,
-      endDate,
+      endDate: parsedEndDate,
       user_id,
     });
 
@@ -125,3 +135,6 @@ export const updateTodo = async (
     return res.status(500).json({ error });
   }
 };
+function parseISO(endDate: string) {
+  throw new Error("Function not implemented.");
+}
