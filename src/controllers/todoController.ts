@@ -13,7 +13,7 @@ export const getAllTodos = async (
     const user_id = req?.user?._id;
     const todos: ITodoDocument[] = await TodoModel.find({ user_id });
 
-    return res.status(200).json({ todos });
+    return res.status(200).json(todos);
   } catch (error) {
     return res.status(500).json({ error });
   }
