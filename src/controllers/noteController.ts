@@ -101,7 +101,7 @@ export const createNote = async (
       isHighPriority,
       user_id,
     });
-    return res.status(200).json({ newNote });
+    return res.status(200).json(newNote);
   } catch (error: any) {
     return res.status(500).json({ error });
   }
@@ -125,7 +125,7 @@ export const deleteNote = async (
       return res.status(404).json({ error: "Note not found" });
     }
 
-    return res.status(200).json({ deletedNote });
+    return res.status(200).json(deletedNote);
   } catch (error: any) {
     return res.status(500).json({ error });
   }
@@ -174,7 +174,7 @@ export const updateNote = async (
       return res.status(404).json({ error: "Note not found" });
     }
 
-    return res.status(200).json({ oldNote });
+    return res.status(200).json(oldNote);
   } catch (error: any) {
     return res.status(500).json({ error });
   }
